@@ -1,0 +1,111 @@
+﻿<Window x:Class="kp_grid_app_poc.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:kp_grid_app_poc"
+        xmlns:model="clr-namespace:kp_grid_app_poc.model"
+        xmlns:lib="clr-namespace:kp_grid_app_poc.lib"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        mc:Ignorable="d"
+        Title="KP Grid POC" Height="575" Width="800">
+    <Window.Resources>
+        <model:Machines x:Key="machines" />
+        <CollectionViewSource x:Key="gridMachines" Source="{StaticResource machines}" 
+                                Filter="CollectionViewSource_Filter">
+                <CollectionViewSource.SortDescriptions>
+                    <!-- Requires 'xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"' declaration. -->
+                    <scm:SortDescription PropertyName="MachineName"/>
+                    <scm:SortDescription PropertyName="Region" />
+                    <scm:SortDescription PropertyName="EusArea" />
+                <scm:SortDescription PropertyName="Facility" />
+            </CollectionViewSource.SortDescriptions>
+                <CollectionViewSource.GroupDescriptions>
+                    <PropertyGroupDescription PropertyName="Region"/>
+                    <PropertyGroupDescription PropertyName="EusArea"/>
+                <PropertyGroupDescription PropertyName="Facility" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
+    </Window.Resources>
+    <Window.CommandBindings>
+        <CommandBinding Command="lib:Commands.Import" CanExecute="CommonCommandBinding_CanExecute" Executed="Import_Executed" />
+        <CommandBinding Command="lib:Commands.Export" CanExecute="CommonCommandBinding_CanExecute" Executed="Export_Executed" />
+    </Window.CommandBindings>
+    <DockPanel>
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <Button Command="lib:Commands.Import" Content="Import CSV" />
+                <Button Command="lib:Commands.Export" Content="Export CSV" />
+            </ToolBar>
+        </ToolBarTray>
+        <StackPanel Orientation="Vertical" DockPanel.Dock="Bottom">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text=" Filters:   " VerticalAlignment="Center" FontWeight="Bold" />
+                
+                <TextBlock Text="Computer Name:  " VerticalAlignment="Center" />
+                <TextBox x:Name="filterComputerName" VerticalAlignment="Center" LostFocus="CompleteFilter_Changed" Width="125" />
+                
+                <TextBlock Text="  Region:  " VerticalAlignment="Center"/>
+                <TextBox x:Name="filterRegion" VerticalAlignment="Center" LostFocus="CompleteFilter_Changed" Width="125" />
+
+                <TextBlock Text="  EUS Area:  " VerticalAlignment="Center"/>
+                <TextBox x:Name="filterEusArea" VerticalAlignment="Center" LostFocus="CompleteFilter_Changed" Width="125"/>
+
+                <TextBlock Text="  Facility:  " VerticalAlignment="Center"/>
+                <TextBox x:Name="filterFacility" VerticalAlignment="Center" LostFocus="CompleteFilter_Changed" Width="125"/>
+
+                <TextBlock Text="   |   " VerticalAlignment="Center" FontWeight="Bold"/>
+                <Button Content="Remove Groups" Margin="10,2,2,2" Click="UngroupButton_Click" />
+                <Button Content="Group by Location" Margin="2" Click="GroupButton_Click" />
+            </StackPanel>
+            <DataGrid x:Name="dataGrid1" 
+                  ItemsSource="{Binding Source={StaticResource gridMachines}}"
+                  CanUserAddRows="False">
+                <DataGrid.GroupStyle>
+                    <!-- Style for groups at top level. -->
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Margin" Value="0,0,0,5"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type GroupItem}">
+                                            <Expander IsExpanded="True" Background="#FF112255" BorderBrush="#FF002255" Foreground="#FFEEEEEE" BorderThickness="1,1,1,5">
+                                                <Expander.Header>
+                                                    <DockPanel>
+                                                        <TextBlock FontWeight="Bold" Text="{Binding Path=Name}" Margin="5,0,0,0" Width="100"/>
+                                                        <TextBlock FontWeight="Bold" Text="{Binding Path=ItemCount}"/>
+                                                    </DockPanel>
+                                                </Expander.Header>
+                                                <Expander.Content>
+                                                    <ItemsPresenter />
+                                                </Expander.Content>
+                                            </Expander>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                    <!-- Style for groups under the top level. -->
+                    <GroupStyle>
+                        <GroupStyle.HeaderTemplate>
+                            <DataTemplate>
+                                <DockPanel Background="LightBlue">
+                                    <TextBlock Text="{Binding Path=Name}" Foreground="Blue" Margin="30,0,0,0" Width="100"/>
+                                    <TextBlock Text="{Binding Path=ItemCount}" Foreground="Blue"/>
+                                </DockPanel>
+                            </DataTemplate>
+                        </GroupStyle.HeaderTemplate>
+                    </GroupStyle>
+                </DataGrid.GroupStyle>
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="Foreground" Value="Black" />
+                        <Setter Property="Background" Value="White" />
+                    </Style>
+                </DataGrid.RowStyle>
+            </DataGrid>
+        </StackPanel>
+    </DockPanel>
+</Window>

@@ -1,0 +1,39 @@
+{
+  "id": "013D5575-7523-4B67-B4A9-22DF858005D2",
+  "name": "WIN10_1909_UPGRADE",
+  "columns": [
+    {
+      "name": "ComputerName",
+      "header": "Computer Name",
+      "source": 0,
+      "filter": true,
+      "sort": true
+    },
+    {
+      "name": "Region",
+      "header": "Region",
+      "source": 5,
+      "filter": true,
+      "sort": true
+    },
+    {
+      "name": "EusArea",
+      "header": "EUS Area",
+      "source": 6,
+      "filter": true,
+      "sort": true
+    },
+    {
+      "name": "Facility",
+      "header": "Facility",
+      "source": 7,
+      "filter": true,
+      "sort": true
+    },
+    {
+      "name": "SerialNumber",
+      "header": "Serial #",
+      "source": 19
+    }
+  ]
+}
